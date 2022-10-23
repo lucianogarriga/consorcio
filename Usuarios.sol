@@ -3,7 +3,7 @@ pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Servicios.sol";
 
-contract Usuarios is Ownable, Servicios{
+contract Usuarios is Ownable {
 
     //Mapeo de usuarios (address) y tendran fondos (uint)
     //esta lista de usuarios son los que pagaran expensas y serv
@@ -35,4 +35,5 @@ contract Usuarios is Ownable, Servicios{
     propietarios[_userAddress] = _balance;
     emit createdUsers(_userAddress,_balance);
     } 
+ 
 }
