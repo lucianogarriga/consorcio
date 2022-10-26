@@ -7,6 +7,8 @@ import "./Tenant.sol";
 
 contract Consorcio is Ownable{
 
+    address private ADMIN;
+
     struct Service{
         string name;
         uint price;
@@ -16,14 +18,14 @@ contract Consorcio is Ownable{
     Tenant [] private tenants;
     Service [] private serviceList;
 
-    mapping(address => Payer) private _payers;
+    // mapping(address => Payer) private _payers;
 
     receive () external payable {}
     // para chequear que se recibe $ de un tenant, se define en estos 2
     fallback () external payable {}
 
     constructor () payable {
-
+        
     }
 
     function paySalaries () public {}
@@ -36,9 +38,16 @@ contract Consorcio is Ownable{
         return address(this);
     }
 
-    function addNewTenant() public {}
+    function addNewTenant(Tenant _tenant) public {
+        tenants.push(_tenant);
+    }
 
-    function addNewEmployee() public {}
+    function addNewEmployee(Employee _employee) public {
+        employeeList.push(_employee);
+    }
 
-    function addNewService() public {}
+    function addNewService(string memory _serviceName, uint _servicePrice) public {
+        serviceList.push(Service(_serviceName, _servicePrice));
+    }
+ 
 }
