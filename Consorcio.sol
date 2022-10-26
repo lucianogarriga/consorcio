@@ -26,13 +26,19 @@ contract Consorcio is Ownable{
 
     }
 
-    function paySalaries () public {
+    function paySalaries () public {}
 
-    }
-    function payAllServices () public {
+    function payAllServices () public { }
 
-    }
-    function payService(uint index) public {
+    function payService(uint index) public {}
 
+    function showAddress() public view returns (address){
+        return address(this);
     }
+
+    function addNewTenant() public {}
+
+    function addNewEmployee() public {}
+
+    function addNewService() public {}
 }
