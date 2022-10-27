@@ -1,53 +1,57 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.7;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Employee.sol";
 import "./Tenant.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Consorcio is Ownable{
+contract Consorcio is Ownable {
 
-    address private ADMIN;
+    address private ADMIN; 
+    mapping(address=> Service) addressToService;
 
-    struct Service{
+    struct Service {
         string name;
         uint price;
     }
-    
-    Employee [] private employeeList;
-    Tenant [] private tenants;
-    Service [] private serviceList;
 
-    // mapping(address => Payer) private _payers;
+    Employee[] private employeeList;
+    Tenant[] private tenantList;
+    Service[] private serviceList;
 
-    receive () external payable {}
     // para chequear que se recibe $ de un tenant, se define en estos 2
+    receive () external payable {}
     fallback () external payable {}
 
-    constructor () payable {
-        
-    }
-
-    function paySalaries () public {}
-
-    function payAllServices () public { }
-
-    function payService(uint index) public {}
+    constructor () payable { 
+    } 
 
     function showAddress() public view returns (address){
         return address(this);
     }
 
-    function addNewTenant(Tenant _tenant) public {
-        tenants.push(_tenant);
+    function paySalaries() public {}
+
+    function payAllServices() public {}
+
+    function payService(uint _serviceIndex, uint _amount) public {
+        require(_serviceIndex < serviceList.length, "El servicio no existe");
+        require(address(this).balance >= _amount, "Fondos insuficientes");
+        (bool sent,) = address(0).call {
+            value: _amount
+        }("");
+        require(sent == true, "Fallo la transferencia");
     }
 
-    function addNewEmployee(Employee _employee) public {
+    function addNewTenant(Tenant _tenant) public onlyOwner {
+        tenantList.push(_tenant);
+    }
+
+    function addNewEmployee(Employee _employee) public onlyOwner{
         employeeList.push(_employee);
     }
 
-    function addNewService(string memory _serviceName, uint _servicePrice) public {
+    function addNewService(string memory _serviceName, uint _servicePrice) public onlyOwner {
         serviceList.push(Service(_serviceName, _servicePrice));
     }
- 
 }

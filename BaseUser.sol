@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.7;
 
-contract BaseUser {
+contract BaseUser{
 
     string private name;
     address private withdrawAddress;
 
-    constructor (string memory newName, address newAddress){
-        name = newName;
-        withdrawAddress = newAddress;
+    constructor (string memory _name, address _withdrawAddress)   {
+        name = _name;
+        withdrawAddress = _withdrawAddress;
     }
 
-    function withdrawal () public {
+    function withdrawl () public {
         // TODO: realizar transferencia hacia withdrawAddress
     }
 }
