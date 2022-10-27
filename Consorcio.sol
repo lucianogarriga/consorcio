@@ -15,6 +15,8 @@ contract Consorcio is Ownable {
         uint price;
     }
 
+    event servicePaid(uint pricePaid);
+
     Employee[] private employeeList;
     Tenant[] private tenantList;
     Service[] private serviceList;
@@ -41,8 +43,13 @@ contract Consorcio is Ownable {
             value: _amount
         }("");
         require(sent == true, "Fallo la transferencia");
+        emit servicePaid(_amount);
     }
 
+    function addNewService(string memory _serviceName, uint _servicePrice) public onlyOwner {
+        serviceList.push(Service(_serviceName, _servicePrice));
+    }
+    
     function addNewTenant(Tenant _tenant) public onlyOwner {
         tenantList.push(_tenant);
     }
@@ -51,7 +58,4 @@ contract Consorcio is Ownable {
         employeeList.push(_employee);
     }
 
-    function addNewService(string memory _serviceName, uint _servicePrice) public onlyOwner {
-        serviceList.push(Service(_serviceName, _servicePrice));
-    }
 }
