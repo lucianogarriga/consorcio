@@ -32,10 +32,14 @@ contract Tenant is BaseUser {
         consorcioAddress = _consorcioAddress;
     }
 
+    function showConsAddress(address _consorcioAddress) public {
+        consorcioAddress = _consorcioAddress;
+    }
+
     function deposit() public payable {
         emit EtherReceived(msg.value);
     }
-    
+
     //utiliza el valor de _servicePrice p/ comparar cuanto debe enviar al Consorcio
     //lo utilizamos para validar si tenant tiene el balance suficiente para pagarlo
     function payExpenses() public {

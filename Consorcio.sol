@@ -22,10 +22,10 @@ contract Consorcio is Ownable {
     Service[] private serviceList;
 
     // para chequear que se recibe $ de un tenant, se define en estos 2
-    receive () external payable {}
-    fallback () external payable {}
+    receive() external payable {}
+    fallback() external payable {}
 
-    constructor () payable { 
+    constructor() payable { 
     } 
 
     function showAddress() public view returns (address){
