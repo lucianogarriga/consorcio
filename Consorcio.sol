@@ -16,6 +16,10 @@ contract Consorcio is Ownable {
     }
 
     event servicesPaid(uint pricePaid); 
+    event servicePaid(string serviceName, uint servicePrice);
+    event salariesPaid();
+    event serviceCreated(string serviceName);
+    event servicesPaidSuccessfully();
 
     Employee[] private employeeList;
     Tenant[] private tenantList;
@@ -24,40 +28,73 @@ contract Consorcio is Ownable {
     Employee private aEmployee;
     Tenant private aTenant;
 
+    // En esta var se acumula el precio total de los servicios que se debe pagar
+    uint private servicePricesAcum;
+
     // para chequear que se recibe $ de un tenant, se define en estos 2
     receive() external payable { }
     fallback() external payable { }
 
-    constructor() { 
+    constructor() payable { 
     } 
+
+    //Modifier p/ reutilizar codigo y verificar el balance sea suficiente
+    modifier isEnoughbalance (uint _amount) {
+        require(address(this).balance >= _amount, "Fondos insuficientes");
+        _;
+    }
 
     function showAddress() public view returns (address){
         return address(this);
     }
 
-    function paySalaries() public {
-        ///TODO(2): Una vez completado el TODO(1), implementar esta funcion. 
-        ///Esta funcion deberia recorrer el array y calcular el total de salarios a pagar,
-        ///validar que tenga fondos suficientes y si es suficiente, realizar el pago de todos los salarios.
+    //por cada empleado, se realiza una transferencia
+    function paySalaries() public onlyOwner isEnoughbalance(getTotalSalaries()){
+        for (uint i; i < employeeList.length; i++){
+            transferToAddress(address(employeeList[i]), employeeList[i].getSalary());
+        }
+        emit salariesPaid();
     }
 
-    function payAllServices(uint _serviceIndex, uint _amount) public {
-        require(_serviceIndex < serviceList.length, "El servicio no existe");
-        require(address(this).balance >= _amount, "Fondos insuficientes");
-        (bool sent,) = address(0).call {
-            value: _amount
+    function getTotalSalaries() private view returns(uint) {
+        uint totalSalaries = 0;
+        for (uint i; i > employeeList.length; i ++){
+            totalSalaries += employeeList[i].getSalary();
+        }
+        return totalSalaries;
+    }
+
+    function transferToAddress(address toAddress, uint amount) public {
+        (bool sent,) = toAddress.call{
+            value: amount
         }("");
         require(sent == true, "Fallo la transferencia");
-        emit servicesPaid(_amount);
     }
 
-    function payService(uint index) public {}
+    function payAllServices() public onlyOwner isEnoughbalance(servicePricesAcum){
+        transferToAddress(getRandomAddress(), servicePricesAcum);
+        emit servicesPaidSuccessfully();
+    }
 
+    function payService(uint index) public onlyOwner isEnoughbalance(serviceList[index].price){
+        transferToAddress(getRandomAddress(), serviceList[index].price);
+        emit servicePaid(serviceList[index].name, serviceList[index].price);
+    } 
+    
     // funcion para crear un nuevo servicio y agregarlo al Service []
-    function addNewService(string memory _serviceName, uint _servicePrice) public onlyOwner {
+    function addNewService(string memory serviceName, uint servicePrice) public onlyOwner {
             // Service al no ser un contrato, no se debe indicar con new Service
-        serviceList.push(Service(_serviceName, _servicePrice));
+        //serviceList.push(Service(serviceName, servicePrice));
+        Service memory service = Service(serviceName, servicePrice);
+        serviceList.push(service);
+        servicePricesAcum += servicePrice;
+        emit serviceCreated(serviceName);
     }
+
+    function getRandomAddress() private pure returns (address){
+        return 0xdD870fA1b7C4700F2BD7f44238821C26f7392148;
+    }
+
     // funcion para crear un nuevo tenant con sus propiedades y agregarlo al tenantList
     function addNewTenant(string memory _name, address _withdrawAddress,
         uint _servicePrice, string memory _buildingAddress, 
@@ -85,10 +122,10 @@ contract Consorcio is Ownable {
     
     //funcion para crear un nuevo employee con sus propiedades y agregarlo al employeeList
     function addNewEmployee(string memory _name, address _withdrawAddress, 
-    string memory _profession, string memory _schedule, uint _salary) 
+    string memory _profession, string memory _schedule, uint salary) 
     public onlyOwner{ 
         employeeList.push(new Employee(_name, _withdrawAddress, _profession, 
-        _schedule, _salary));
+        _schedule, salary));
     }
     //funcion para saber la cantidad de employee creados y guardados en employeeList
     function employeeArray() public view returns (uint) {
