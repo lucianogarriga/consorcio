@@ -15,7 +15,7 @@ contract Consorcio is Ownable {
         uint price;
     }
 
-    event servicePaid(uint pricePaid); 
+    event servicesPaid(uint pricePaid); 
 
     Employee[] private employeeList;
     Tenant[] private tenantList;
@@ -35,19 +35,24 @@ contract Consorcio is Ownable {
         return address(this);
     }
 
-    function paySalaries() public {}
+    function paySalaries() public {
+        ///TODO(2): Una vez completado el TODO(1), implementar esta funcion. 
+        ///Esta funcion deberia recorrer el array y calcular el total de salarios a pagar,
+        ///validar que tenga fondos suficientes y si es suficiente, realizar el pago de todos los salarios.
+    }
 
-    function payAllServices() public {}
-
-    function payService(uint _serviceIndex, uint _amount) public {
+    function payAllServices(uint _serviceIndex, uint _amount) public {
         require(_serviceIndex < serviceList.length, "El servicio no existe");
         require(address(this).balance >= _amount, "Fondos insuficientes");
         (bool sent,) = address(0).call {
             value: _amount
         }("");
         require(sent == true, "Fallo la transferencia");
-        emit servicePaid(_amount);
+        emit servicesPaid(_amount);
     }
+
+    function payService(uint index) public {}
+
     // funcion para crear un nuevo servicio y agregarlo al Service []
     function addNewService(string memory _serviceName, uint _servicePrice) public onlyOwner {
             // Service al no ser un contrato, no se debe indicar con new Service
