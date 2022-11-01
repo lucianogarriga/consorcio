@@ -8,15 +8,18 @@ contract Employee is BaseUser {
     // declaramos var globales de estado, y los modificadores inician con _
     string private profession;
     string private schedule;
+    uint private salary;
 
     constructor (
         string memory _name,
         address _withdrawAddress,
         string memory _profession,
-        string memory _schedule
+        string memory _schedule,
+        uint _salary
     ) // para llamar al padre => llamarlo luego de los parametros del constructor
     BaseUser (_name, _withdrawAddress) {
         profession = _profession;
         schedule = _schedule;
+        salary = _salary;
     }
 }

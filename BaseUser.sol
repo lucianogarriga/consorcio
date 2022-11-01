@@ -10,11 +10,11 @@ contract BaseUser{
     event WithdrawalSuccess (bool success, uint addressBalance);
 
     //cuando no haya data extra, ademas del value
-    receive() virtual external payable{ 
+    receive() external payable{ 
         emit EtherReceived(msg.value, address(this), address(this).balance);
     }
     //cuando si haya data extra
-    fallback() virtual external payable{
+    fallback() external payable{
         emit EtherReceived(msg.value, address(this), address(this).balance);
      }
 
@@ -22,16 +22,15 @@ contract BaseUser{
         name = _name;
         withdrawAddress = _withdrawAddress;
     }
-    
+    // realizar transferencia hacia withdrawAddress
     function withdrawal (uint _amount) public {
-        // realizar transferencia hacia withdrawAddress
-        //valida si el balance del contrato es > al valor del servicio
+        //valida si el balance del contrato es >= al valor del servicio
         require(address(this).balance >= _amount, "Fondos insuficientes");
         // un bool si es true, realiza la transferencia al address que indicamos
         (bool success,) = withdrawAddress.call{
             value: _amount
         }("");
-        //require(sent == true, "Fallo la transferencia");
+        //require(success == true, "Fallo la transferencia") - otra opcion;
         emit WithdrawalSuccess(success, address(this).balance);
     } 
     function getAddress() public view returns(address){

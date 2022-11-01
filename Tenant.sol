@@ -45,10 +45,5 @@ contract Tenant is BaseUser {
         }("");
         require(sent == true, "Fallo la transferencia");
         emit ExpensesPaid(servicePrice);
-    }
-
-    function getAddress() public view returns(address){
-        return address(this);
-    }
-
+    } 
 }
