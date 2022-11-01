@@ -19,5 +19,4 @@ contract Employee is BaseUser {
         profession = _profession;
         schedule = _schedule;
     }
-
 }

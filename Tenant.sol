@@ -11,14 +11,8 @@ contract Tenant is BaseUser {
     string private buildingAddress;
     address private consorcioAddress;
 
-    event ExpensesPaid(uint pricePaid);
-    event EtherReceived(uint amount);
+    event ExpensesPaid(uint pricePaid);  
 
-    //cuando no haya data extra, ademas del value
-    receive() external payable{}
-    //cuando si haya data extra
-    fallback() external payable{}
-    
     //marcando ademas como payable el constructor y deposit(), este SC recibira ETH
     constructor (
         string memory _name,
@@ -29,21 +23,21 @@ contract Tenant is BaseUser {
     ) payable BaseUser (_name, _withdrawAddress) {
         servicePrice = _servicePrice;
         buildingAddress = _buildingAddress;
-        consorcioAddress = _consorcioAddress;
+        consorcioAddress = _consorcioAddress; 
     }
 
     function showConsAddress(address _consorcioAddress) public {
         consorcioAddress = _consorcioAddress;
-    }
+    } 
 
     function deposit() public payable {
-        emit EtherReceived(msg.value);
+        emit EtherReceived(msg.value, address(this), address(this).balance);
     }
 
     //utiliza el valor de _servicePrice p/ comparar cuanto debe enviar al Consorcio
     //lo utilizamos para validar si tenant tiene el balance suficiente para pagarlo
     function payExpenses() public {
-        //valida si el balance del contrato es > al valor del servicio
+        //valida si el balance del contrato es >= al valor del servicio
         require(address(this).balance >= servicePrice, "Fondos insuficientes");
         // un bool si es true, realiza la transferencia al address que indicamos
         (bool sent,) = consorcioAddress.call{
@@ -51,6 +45,10 @@ contract Tenant is BaseUser {
         }("");
         require(sent == true, "Fallo la transferencia");
         emit ExpensesPaid(servicePrice);
+    }
+
+    function getAddress() public view returns(address){
+        return address(this);
     }
 
 }
