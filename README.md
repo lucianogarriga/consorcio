@@ -1,6 +1,6 @@
 # Training INCLUIT - Introduccion a dApps en Solidity
 
- ## Ejercicio Practico Nro 2
+ ## Trabajo Nro 2
 
  Se debe desarrollar un sistema para que la administración de un consorcio de un edificio se haga mediante una dApp. 
  
